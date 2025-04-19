@@ -38,6 +38,7 @@ public class BPMCommand implements CommandExecutor {
             case "dump" -> handleDumpCommand(sender);
             case "load" -> args.length > 1 && handleLoadCommand(sender, args[1]);
             case "unload" -> args.length > 1 && handleUnloadCommand(sender, args[1]);
+            case "reload" -> args.length > 1 && handleReloadCommand(sender, args[1]);
             case "disable" -> args.length > 1 && handleDisableCommand(sender, args[1]);
             case "enable" -> args.length > 1 && handleEnableCommand(sender, args[1]);
             case "list" -> handleListCommand(sender, 1);
@@ -96,6 +97,16 @@ public class BPMCommand implements CommandExecutor {
             sender.sendMessage(config.getString("operation.enable-success").replace("{plugin}", fileName));
         } else {
             sender.sendMessage(config.getString("operation.plugin-not-found").replace("{plugin}", fileName));
+        }
+        return true;
+    }
+
+    private boolean handleReloadCommand(CommandSender sender, String pluginName) {
+        boolean success = pluginManagerUtil.reloadPlugin(pluginName);
+        if (success) {
+            sender.sendMessage(config.getString("operation.reload-success").replace("{plugin}", pluginName));
+        } else {
+            sender.sendMessage(config.getString("operation.plugin-not-found").replace("{plugin}", pluginName));
         }
         return true;
     }

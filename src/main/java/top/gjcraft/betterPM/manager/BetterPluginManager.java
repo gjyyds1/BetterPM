@@ -47,6 +47,23 @@ public class BetterPluginManager {
         return true;
     }
 
+    public boolean reloadPlugin(String pluginName) {
+        Plugin plugin = bukkitPluginManager.getPlugin(pluginName);
+        if (plugin == null) {
+            return false;
+        }
+        // 如果插件正在运行，先卸载它
+        if (plugin.isEnabled()) {
+            bukkitPluginManager.disablePlugin(plugin);
+        } else {
+            // 如果插件未运行，先加载它
+            loadPlugin(pluginName);
+            return true;
+        }
+        // 重新加载插件
+        return loadPlugin(pluginName);
+    }
+
     public boolean disablePlugin(String pluginName) {
         Plugin plugin = bukkitPluginManager.getPlugin(pluginName);
         if (plugin == null) {
