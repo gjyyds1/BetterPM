@@ -1,5 +1,6 @@
 package top.gjcraft.betterPM.manager;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.Plugin;
@@ -8,14 +9,51 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.lang.reflect.Method;
 
 public class BetterPluginManager {
     private final org.bukkit.plugin.PluginManager bukkitPluginManager;
     private final File pluginsFolder;
+    private boolean isPaperServer;
+    private Method paperPluginUnloadMethod;
+    private Method paperPluginLoadMethod;
 
     public BetterPluginManager(PluginManager bukkitPluginManager, File pluginsFolder) {
         this.bukkitPluginManager = bukkitPluginManager;
         this.pluginsFolder = pluginsFolder;
+        
+        // 检测是否为Paper服务端
+        this.isPaperServer = checkPaperServer();
+        if (isPaperServer) {
+            initPaperMethods();
+        }
+    }
+
+    private boolean checkPaperServer() {
+        try {
+            Class.forName("com.destroystokyo.paper.PaperConfig");
+            return true;
+        } catch (ClassNotFoundException e) {
+            try {
+                Class.forName("io.papermc.paper.configuration.Configuration");
+                return true;
+            } catch (ClassNotFoundException ex) {
+                return false;
+            }
+        }
+    }
+
+    private void initPaperMethods() {
+        try {
+            Class<?> simplePluginManagerClass = bukkitPluginManager.getClass();
+            paperPluginUnloadMethod = simplePluginManagerClass.getDeclaredMethod("unloadPlugin", Plugin.class);
+            paperPluginLoadMethod = simplePluginManagerClass.getDeclaredMethod("loadPlugin", File.class);
+            paperPluginUnloadMethod.setAccessible(true);
+            paperPluginLoadMethod.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            Bukkit.getLogger().warning("无法初始化Paper插件管理方法，将使用标准Bukkit API");
+            isPaperServer = false;
+        }
     }
 
     public boolean loadPlugin(String fileName) {
@@ -41,6 +79,15 @@ public class BetterPluginManager {
         Plugin plugin = bukkitPluginManager.getPlugin(pluginName);
         if (plugin == null) {
             return false;
+        }
+
+        if (isPaperServer && paperPluginUnloadMethod != null) {
+            try {
+                paperPluginUnloadMethod.invoke(bukkitPluginManager, plugin);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         bukkitPluginManager.disablePlugin(plugin);

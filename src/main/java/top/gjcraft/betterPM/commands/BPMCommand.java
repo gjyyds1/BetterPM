@@ -4,8 +4,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import top.gjcraft.betterPM.manager.MenuManager;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +22,7 @@ public class BPMCommand implements CommandExecutor {
     private final File pluginsFolder;
     private final int pluginsPerPage;
     private final top.gjcraft.betterPM.manager.BetterPluginManager pluginManagerUtil;
+    private final MenuManager menuManager;
 
     public BPMCommand(FileConfiguration config, PluginManager pluginManager, File pluginsFolder) {
         this.config = config;
@@ -26,6 +30,7 @@ public class BPMCommand implements CommandExecutor {
         this.pluginsFolder = pluginsFolder;
         this.pluginsPerPage = config.getInt("plugins-per-page", 10);
         this.pluginManagerUtil = new top.gjcraft.betterPM.manager.BetterPluginManager(pluginManager, pluginsFolder);
+        this.menuManager = new MenuManager(pluginManagerUtil, pluginManager);
     }
 
     @Override
@@ -43,6 +48,7 @@ public class BPMCommand implements CommandExecutor {
             case "enable" -> args.length > 1 && handleEnableCommand(sender, args[1]);
             case "list" -> handleListCommand(sender, 1);
             case "page" -> args.length > 1 && handleListCommand(sender, Integer.parseInt(args[1]));
+            case "menu" -> handleMenuCommand(sender);
             default -> false;
         };
     }
@@ -108,6 +114,15 @@ public class BPMCommand implements CommandExecutor {
         } else {
             sender.sendMessage(config.getString("operation.plugin-not-found").replace("{plugin}", pluginName));
         }
+        return true;
+    }
+
+    private boolean handleMenuCommand(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§c该命令只能由玩家执行！");
+            return false;
+        }
+        menuManager.openPluginMenu(player);
         return true;
     }
 
