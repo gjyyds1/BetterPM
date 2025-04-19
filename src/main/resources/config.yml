@@ -1,0 +1,23 @@
+# BetterPM Plugin Configuration
+
+# 每页显示的插件数量
+plugins-per-page: 10
+
+# 插件列表消息格式
+messages:
+  plugin-enabled: "§a已启用"
+  plugin-disabled: "§c未启用"
+  plugin-list-header: "§6===== 插件列表 (第 {page}/{total} 页) ====="
+  plugin-list-format: "§7- {plugin_name} {status}"
+  plugin-list-footer: "§6使用 /bpm page <页码> 查看其他页"
+
+# 插件操作消息
+operation:
+  dump-success: "§a插件信息已导出到 plugins_version_dump.txt"
+  load-success: "§a插件 {plugin} 加载成功"
+  load-failed: "§c插件 {plugin} 加载失败"
+  unload-success: "§a插件 {plugin} 已卸载"
+  disable-success: "§a插件 {plugin} 已禁用"
+  enable-success: "§a插件 {plugin} 已启用"
+  plugin-not-found: "§c未找到插件 {plugin}"
+  invalid-page: "§c无效的页码"
