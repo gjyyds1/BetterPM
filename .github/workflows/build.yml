@@ -35,4 +35,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ env.RELEASE_TAG }}
-          artifacts: "target/EZMC-*.jar"
+          artifacts: "target/[^origin]*.jar"
