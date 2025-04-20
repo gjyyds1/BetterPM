@@ -23,31 +23,31 @@ BetterPM 是一个强大的 Bukkit 插件管理器，提供了更好的插件管
 
 ### 加载插件
 ```
-/pm load <插件名>
+/bpm load <插件名>
 ```
 加载指定的插件文件（不需要包含.jar后缀）
 
 ### 卸载插件
 ```
-/pm unload <插件名>
+/bpm unload <插件名>
 ```
 安全地卸载指定的插件
 
 ### 重载插件
 ```
-/pm reload <插件名>
+/bpm reload <插件名>
 ```
 重新加载指定的插件
 
 ### 禁用插件
 ```
-/pm disable <插件名>
+/bpm disable <插件名>
 ```
 禁用并移动插件文件（添加.disabled后缀）
 
 ### 启用插件
 ```
-/pm enable <插件名>
+/bpm enable <插件名>
 ```
 启用之前被禁用的插件
 

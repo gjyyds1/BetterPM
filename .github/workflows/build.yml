@@ -1,4 +1,4 @@
-name: EZMC CI
+name: Anto Build
 
 on:
   push:
