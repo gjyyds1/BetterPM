@@ -1,5 +1,5 @@
 name: BetterPM
-version: '1.0.0'
+version: '1.0.1'
 main: top.gjcraft.betterPM.BetterPM
 api-version: '1.21'
 authors: [ gjyyds1 ]
@@ -8,7 +8,7 @@ description: 更好的插件管理器!
 commands:
   bpm:
     description: BetterPM主命令
-    usage: /<command> [dump|load|unload|disable|enable|list|page] [args...]
+    usage: /<command> [dump|load|unload|disable|enable|list|page|refresh] [args...]
     aliases: [betterpluginmanager, pluginmanager]
     permission: betterpm.admin
 

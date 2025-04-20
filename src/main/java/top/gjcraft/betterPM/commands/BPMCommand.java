@@ -49,6 +49,7 @@ public class BPMCommand implements CommandExecutor {
             case "list" -> handleListCommand(sender, 1);
             case "page" -> args.length > 1 && handleListCommand(sender, Integer.parseInt(args[1]));
             case "menu" -> handleMenuCommand(sender);
+            case "refresh" -> handleRefreshCommand(sender);
             default -> false;
         };
     }
@@ -123,6 +124,12 @@ public class BPMCommand implements CommandExecutor {
             return false;
         }
         menuManager.openPluginMenu(player);
+        return true;
+    }
+
+    private boolean handleRefreshCommand(CommandSender sender) {
+        pluginManagerUtil.scanPluginFiles();
+        sender.sendMessage(config.getString("operation.refresh-success", "§a插件列表已刷新"));
         return true;
     }
 

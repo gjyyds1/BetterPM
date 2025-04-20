@@ -52,12 +52,10 @@ public class MenuListener implements Listener {
         }
 
         // 处理插件选择
-        if (event.getSlot() < 45) {
+        if (event.getSlot() < 45 && clickedItem.getItemMeta() != null) {
             String pluginFileName = clickedItem.getItemMeta().getDisplayName().substring(2);
-            if (pluginFileName.endsWith(".jar") || pluginFileName.endsWith(".jar.disabled")) {
-                menuManager.setSelectedPlugin(player.getName(), pluginFileName + ".jar");
-                menuManager.openPluginMenu(player, currentPage);
-            }
+            menuManager.setSelectedPlugin(player.getName(), pluginFileName);
+            menuManager.openPluginMenu(player, currentPage);
             return;
         }
 
@@ -69,10 +67,10 @@ public class MenuListener implements Listener {
         }
 
         String pluginName = selectedPlugin;
-        if (pluginName.endsWith(".jar")) {
-            pluginName = pluginName.substring(0, pluginName.length() - 4);
-        } else if (pluginName.endsWith(".jar.disabled")) {
+        if (pluginName.endsWith(".jar.disabled")) {
             pluginName = pluginName.substring(0, pluginName.length() - 13);
+        } else if (pluginName.endsWith(".jar")) {
+            pluginName = pluginName.substring(0, pluginName.length() - 4);
         }
 
         switch (event.getSlot()) {

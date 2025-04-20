@@ -93,7 +93,9 @@ public class MenuManager {
             meta.setDisplayName("§f" + displayName);
 
             List<String> lore = new ArrayList<>();
-            lore.add("§7状态: " + (isLoaded ? "§a已加载" : "§c未加载"));
+            Plugin plugin = bukkitPluginManager.getPlugin(displayName);
+            boolean isEnabled = plugin != null && plugin.isEnabled();
+            lore.add("§7状态: " + (isEnabled ? "§a已启用" : "§c未启用"));
             if (isDisabled) {
                 lore.add("§7文件状态: §c已禁用");
             }
