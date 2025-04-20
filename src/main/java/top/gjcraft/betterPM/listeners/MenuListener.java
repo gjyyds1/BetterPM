@@ -21,7 +21,8 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.getView().getTitle().startsWith("插件管理")) {
+        String title = event.getView().getTitle();
+        if (!(title.startsWith("插件管理") || title.startsWith("插件操作"))) {
             return;
         }
 
@@ -51,43 +52,59 @@ public class MenuListener implements Listener {
             return;
         }
 
-        // 处理插件选择
-        if (event.getSlot() < 45 && clickedItem.getItemMeta() != null) {
-            String pluginFileName = clickedItem.getItemMeta().getDisplayName().substring(2);
-            menuManager.setSelectedPlugin(player.getName(), pluginFileName);
+        // 处理主菜单操作
+        if (title.startsWith("插件管理")) {
+            // 处理插件项点击
+            if (event.getSlot() < 45 && clickedItem.getItemMeta() != null) {
+                String pluginFileName = clickedItem.getItemMeta().getDisplayName().substring(2);
+                menuManager.openPluginSubMenu(player, pluginFileName);
+                return;
+            }
+
+            // 处理刷新按钮
+            if (event.getSlot() == 49) {
+                menuManager.openPluginMenu(player, currentPage);
+                return;
+            }
+            return;
+        }
+
+        // 处理子菜单操作
+        if (title.startsWith("插件操作")) {
+            String selectedPlugin = menuManager.getSelectedPlugin(player.getName());
+            if (selectedPlugin == null) {
+                player.sendMessage("§c发生错误，请重新选择插件");
+                menuManager.openPluginMenu(player, currentPage);
+                return;
+            }
+
+            String pluginName = selectedPlugin;
+            if (pluginName.endsWith(".jar.disabled")) {
+                pluginName = pluginName.substring(0, pluginName.length() - 13);
+            } else if (pluginName.endsWith(".jar")) {
+                pluginName = pluginName.substring(0, pluginName.length() - 4);
+            }
+
+            switch (event.getSlot()) {
+                case 0: // 加载插件
+                    pluginManager.loadPlugin(pluginName);
+                    break;
+                case 2: // 卸载插件
+                    pluginManager.unloadPlugin(pluginName);
+                    break;
+                case 4: // 启用插件
+                    pluginManager.enablePlugin(pluginName);
+                    break;
+                case 6: // 禁用插件
+                    pluginManager.disablePlugin(pluginName);
+                    break;
+                case 8: // 返回主菜单
+                    menuManager.openPluginMenu(player, currentPage);
+                    return;
+            }
+
+            // 执行操作后返回主菜单
             menuManager.openPluginMenu(player, currentPage);
-            return;
         }
-
-        // 处理操作按钮
-        String selectedPlugin = menuManager.getSelectedPlugin(player.getName());
-        if (selectedPlugin == null) {
-            player.sendMessage("§c请先选择一个插件");
-            return;
-        }
-
-        String pluginName = selectedPlugin;
-        if (pluginName.endsWith(".jar.disabled")) {
-            pluginName = pluginName.substring(0, pluginName.length() - 13);
-        } else if (pluginName.endsWith(".jar")) {
-            pluginName = pluginName.substring(0, pluginName.length() - 4);
-        }
-
-        switch (event.getSlot()) {
-            case 47: // 加载插件
-                pluginManager.loadPlugin(pluginName);
-                break;
-            case 48: // 卸载插件
-                pluginManager.unloadPlugin(pluginName);
-                break;
-            case 50: // 启用插件
-                pluginManager.enablePlugin(pluginName);
-                break;
-            case 51: // 禁用插件
-                pluginManager.disablePlugin(pluginName);
-                break;
-        }
-
-        menuManager.openPluginMenu(player, currentPage);
     }
 }

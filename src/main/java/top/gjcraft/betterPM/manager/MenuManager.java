@@ -21,6 +21,7 @@ public class MenuManager {
     private final Map<String, Integer> playerPages;
     private final Map<String, String> selectedPlugins;
     private final int ITEMS_PER_PAGE = 45; // 5行9列的箱子界面，最后一行放控制按钮
+    private final int SUB_MENU_SIZE = 9; // 子菜单大小
 
     public MenuManager(BetterPluginManager pluginManager, PluginManager bukkitPluginManager) {
         this.pluginManager = pluginManager;
@@ -57,11 +58,8 @@ public class MenuManager {
             inventory.setItem(53, createNavigationItem(Material.ARROW, "下一页"));
         }
 
-        // 添加操作按钮
-        inventory.setItem(47, createActionButton(Material.HOPPER, "加载插件"));
-        inventory.setItem(48, createActionButton(Material.BARRIER, "卸载插件"));
-        inventory.setItem(50, createActionButton(Material.LIME_DYE, "启用插件"));
-        inventory.setItem(51, createActionButton(Material.GRAY_DYE, "禁用插件"));
+        // 添加刷新按钮
+        inventory.setItem(49, createActionButton(Material.CLOCK, "刷新"));
 
         player.openInventory(inventory);
     }
@@ -70,17 +68,8 @@ public class MenuManager {
         String fileName = file.getName();
         boolean isDisabled = fileName.endsWith(".disabled");
         boolean isLoaded = pluginManager.isPluginLoaded(fileName);
-        boolean isSelected = fileName.equals(selectedPlugins.get(playerName));
 
-        Material material;
-        if (isSelected) {
-            material = Material.GOLD_BLOCK;
-        } else if (isLoaded) {
-            material = Material.EMERALD_BLOCK;
-        } else {
-            material = Material.REDSTONE_BLOCK;
-        }
-
+        Material material = isLoaded ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK;
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -100,7 +89,7 @@ public class MenuManager {
                 lore.add("§7文件状态: §c已禁用");
             }
             lore.add("");
-            lore.add("§e点击选择此插件");
+            lore.add("§e点击进入操作菜单");
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
@@ -130,8 +119,18 @@ public class MenuManager {
         return item;
     }
 
-    public void setSelectedPlugin(String playerName, String pluginFileName) {
-        selectedPlugins.put(playerName, pluginFileName);
+    public void openPluginSubMenu(Player player, String pluginFileName) {
+        Inventory inventory = Bukkit.createInventory(null, SUB_MENU_SIZE, "插件操作 - " + pluginFileName);
+        
+        // 添加操作按钮
+        inventory.setItem(0, createActionButton(Material.HOPPER, "加载插件"));
+        inventory.setItem(2, createActionButton(Material.BARRIER, "卸载插件"));
+        inventory.setItem(4, createActionButton(Material.LIME_DYE, "启用插件"));
+        inventory.setItem(6, createActionButton(Material.GRAY_DYE, "禁用插件"));
+        inventory.setItem(8, createActionButton(Material.ARROW, "返回"));
+
+        player.openInventory(inventory);
+        selectedPlugins.put(player.getName(), pluginFileName);
     }
 
     public String getSelectedPlugin(String playerName) {
