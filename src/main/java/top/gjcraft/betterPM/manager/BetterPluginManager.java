@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class BetterPluginManager {
     private final org.bukkit.plugin.PluginManager bukkitPluginManager;
@@ -171,5 +174,29 @@ public class BetterPluginManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<File> scanPluginFiles() {
+        List<File> pluginFiles = new ArrayList<>();
+        File[] files = pluginsFolder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                String name = file.getName().toLowerCase();
+                if (name.endsWith(".jar") || name.endsWith(".jar.disabled")) {
+                    pluginFiles.add(file);
+                }
+            }
+        }
+        return pluginFiles;
+    }
+
+    public boolean isPluginLoaded(String fileName) {
+        String pluginName = fileName;
+        if (pluginName.endsWith(".jar")) {
+            pluginName = pluginName.substring(0, pluginName.length() - 4);
+        } else if (pluginName.endsWith(".jar.disabled")) {
+            pluginName = pluginName.substring(0, pluginName.length() - 13);
+        }
+        return bukkitPluginManager.getPlugin(pluginName) != null;
     }
 }

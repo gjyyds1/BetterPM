@@ -3,6 +3,9 @@
 # 每页显示的插件数量
 plugins-per-page: 10
 
+# 插件文件夹自动同步间隔（秒）
+auto-sync-interval: 300
+
 # 插件列表消息格式
 messages:
   plugin-enabled: "§a已启用"
